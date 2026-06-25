@@ -3,540 +3,341 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Citadene Technologies | Asset & Sensor Monitoring</title>
-  <meta name="description" content="Citadene Technologies builds rugged IoT monitoring systems for pole-mounted and remote assets: motion/tilt detection, location visibility, alerts, and dashboards." />
-  <meta name="keywords" content="Citadene Technologies, IoT monitoring, tilt sensor, ESP32, LoRa, asset tracking, geofence, dashboard, South Africa" />
+  <title>Citadene Technologies — Software for the operations that move South Africa</title>
+  <meta name="description" content="Citadene Technologies (Pty) Ltd builds operational software for South African industry. Parent company of MicMap (fleet & compliance) and Omissia (toll revenue assurance)." />
+  <meta name="keywords" content="Citadene Technologies, Citadene, MicMap, Omissia, South Africa software, fleet compliance, toll revenue assurance, Johannesburg" />
   <meta name="robots" content="index,follow" />
 
-  <!-- Open Graph -->
   <meta property="og:title" content="Citadene Technologies" />
-  <meta property="og:description" content="IoT monitoring for remote and pole-mounted assets. Alerts. Maps. Dashboards." />
+  <meta property="og:description" content="Software for the operations that move South Africa. Parent of MicMap and Omissia." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://YOURDOMAIN.co.za/" />
-  <meta property="og:image" content="https://YOURDOMAIN.co.za/og-image.jpg" />
+  <meta property="og:url" content="https://citadene.co.za/" />
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B0D12'/%3E%3Cpath d='M16 44V20l16-8 16 8v24l-16 8z' fill='none' stroke='%23FBBF24' stroke-width='3'/%3E%3Cpath d='M32 12v40' stroke='%2334D399' stroke-width='3'/%3E%3C/svg%3E" />
 
-  <!-- Favicon (optional) -->
-  <link rel="icon" href="favicon.ico" />
-
-  <!-- Simple, modern styling -->
   <style>
     :root{
-      --bg:#070A12;
-      --card:#0D1324;
-      --card2:#0A1020;
-      --text:#EAF0FF;
-      --muted:#A9B4D0;
+      --bg:#08090C;
+      --bg-2:#0B0D12;
+      --panel:#10131B;
       --line:rgba(255,255,255,.08);
-      --accent:#7C5CFF;
-      --accent2:#25D6A2;
-      --shadow: 0 20px 60px rgba(0,0,0,.45);
-      --radius: 18px;
-      --max: 1120px;
+      --line-2:rgba(255,255,255,.14);
+      --text:#F2F4F8;
+      --muted:#9AA3B5;
+      --mute-2:#6B7385;
+      --amber:#FBBF24;     /* MicMap accent */
+      --teal:#34D399;      /* Omissia accent */
+      --radius:18px;
+      --max:1180px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      background: radial-gradient(1200px 800px at 15% 0%, rgba(124,92,255,.22), transparent 60%),
-                  radial-gradient(1000px 700px at 85% 10%, rgba(37,214,162,.15), transparent 55%),
-                  var(--bg);
       color:var(--text);
-      font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(1100px 700px at 12% -10%, rgba(251,191,36,.10), transparent 60%),
+        radial-gradient(1000px 700px at 90% 5%, rgba(52,211,153,.08), transparent 55%),
+        var(--bg);
+      font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       letter-spacing:.1px;
+      -webkit-font-smoothing:antialiased;
     }
     a{color:inherit; text-decoration:none}
-    .wrap{max-width:var(--max); margin:0 auto; padding: 0 22px;}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 22px}
+
+    /* nav */
     .nav{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(7,10,18,.85), rgba(7,10,18,.35));
+      background: linear-gradient(to bottom, rgba(8,9,12,.85), rgba(8,9,12,.4));
       border-bottom:1px solid var(--line);
     }
-    .nav-inner{
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 14px 0;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      font-weight:700; letter-spacing:.4px;
-    }
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.18em; font-size:14px; text-transform:uppercase}
     .logo{
-      width:34px; height:34px; border-radius:12px;
+      width:32px; height:32px; border-radius:10px;
       background:
-        radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
-        linear-gradient(135deg, rgba(124,92,255,1), rgba(37,214,162,1));
-      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+        linear-gradient(135deg, rgba(251,191,36,.95), rgba(52,211,153,.85));
+      box-shadow: 0 10px 30px rgba(251,191,36,.15);
+      position:relative;
     }
-    .nav-links{
-      display:flex; align-items:center; gap:18px;
-      color:var(--muted);
-      font-weight:600;
-      font-size:14px;
+    .logo::after{
+      content:""; position:absolute; inset:6px; border-radius:6px;
+      background: var(--bg-2);
+      border:2px solid rgba(255,255,255,.18);
     }
+    .nav-links{display:flex; gap:22px; color:var(--muted); font-weight:600; font-size:14px}
     .nav-links a:hover{color:var(--text)}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px;
-      padding: 11px 14px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      box-shadow: none;
-      color: var(--text);
-      font-weight:700;
-      font-size:14px;
-      cursor: pointer;
-    }
-    .btn.primary{
-      border-color: rgba(124,92,255,.5);
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(37,214,162,.75));
-      box-shadow: 0 18px 55px rgba(124,92,255,.22);
-    }
-    .btn:hover{transform: translateY(-1px)}
-    .hero{padding: 68px 0 28px;}
-    .hero-grid{
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 22px;
-      align-items:stretch;
-    }
+    @media (max-width: 720px){ .nav-links{display:none} }
+
+    /* hero */
+    .hero{padding: 80px 0 40px}
     .kicker{
-      color: var(--muted);
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing: .18em;
-      font-size: 12px;
+      display:inline-flex; align-items:center; gap:10px;
+      color:var(--muted); font-weight:700;
+      text-transform:uppercase; letter-spacing:.22em; font-size:11px;
+      border:1px solid var(--line); padding:8px 12px; border-radius:999px;
+      background: rgba(255,255,255,.02);
     }
+    .kicker .dot{width:7px; height:7px; border-radius:99px; background:var(--teal); box-shadow:0 0 0 4px rgba(52,211,153,.18)}
     h1{
-      margin: 10px 0 12px;
-      font-size: clamp(32px, 4.2vw, 54px);
-      line-height:1.05;
-      letter-spacing:-.02em;
-    }
-    .lead{
-      color: var(--muted);
-      font-size: 17px;
-      max-width: 58ch;
-      margin: 0 0 18px;
-    }
-    .cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top: 18px;}
-    .card{
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border-radius: var(--radius);
-      box-shadow: 0 20px 60px rgba(0,0,0,.45);
-    }
-    .hero-card{
-      padding: 18px;
-      display:flex; flex-direction:column; justify-content:space-between;
-      background:
-        radial-gradient(260px 180px at 30% 20%, rgba(124,92,255,.20), transparent 60%),
-        radial-gradient(260px 180px at 80% 30%, rgba(37,214,162,.14), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
-    }
-    .mini{
-      display:grid; gap:10px;
-      grid-template-columns: 1fr 1fr;
-      margin-top: 12px;
-    }
-    .stat{
-      padding: 12px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
-    }
-    .stat .n{font-weight:900; font-size: 18px}
-    .stat .l{color:var(--muted); font-weight:700; font-size: 12px; margin-top: 3px}
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.18);
-      color: var(--muted);
-      font-weight:700;
-      font-size:12px;
-      width: fit-content;
-    }
-    .dot{width:8px; height:8px; border-radius:99px; background: var(--accent2); box-shadow: 0 0 0 4px rgba(37,214,162,.12);}
-    .section{padding: 46px 0;}
-    .section h2{
-      margin:0 0 10px;
-      font-size: 24px;
-      letter-spacing:-.01em;
-    }
-    .section p{margin:0; color:var(--muted)}
-    .grid3{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 18px;
-    }
-    .feature{
-      padding: 18px;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.14);
-    }
-    .feature h3{margin: 6px 0 6px; font-size: 16px}
-    .feature p{margin:0; color:var(--muted); font-size:14px}
-    .icon{
-      width: 40px; height: 40px; border-radius: 14px;
-      border:1px solid var(--line);
-      display:grid; place-items:center;
-      background: linear-gradient(135deg, rgba(124,92,255,.25), rgba(37,214,162,.18));
-      font-weight:900;
-    }
-    .split{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 18px;
-    }
-    .box{
-      padding: 18px;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.14);
-    }
-    .list{margin: 10px 0 0; padding:0; list-style:none; display:grid; gap:8px;}
-    .list li{
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
-      font-weight:650;
-      font-size: 14px;
-    }
-    .contact{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:14px;
-      margin-top:18px;
-    }
-    label{display:block; font-size:12px; color:var(--muted); font-weight:800; margin-bottom:6px; letter-spacing:.08em; text-transform:uppercase}
-    input, textarea{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-      outline:none;
-      font: inherit;
-    }
-    textarea{min-height:120px; resize:vertical}
-    .footer{
-      padding: 28px 0 40px;
-      color: var(--muted);
-      border-top: 1px solid var(--line);
-      margin-top: 30px;
-    }
-    .footer .row{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:center}
-    .small{font-size:13px}
-    .badge{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.02);
-      color: var(--muted);
+      margin: 18px 0 14px;
+      font-size: clamp(34px, 5.2vw, 64px);
+      line-height:1.04;
+      letter-spacing:-.025em;
       font-weight:800;
-      font-size:12px;
+    }
+    h1 .hl-a{color:var(--amber)}
+    h1 .hl-b{color:var(--teal)}
+    .lede{color:var(--muted); font-size:18px; max-width:62ch; margin:0 0 22px}
+    .cta-row{display:flex; gap:12px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:12px 18px; border-radius:12px;
+      border:1px solid var(--line-2); background:rgba(255,255,255,.03);
+      color:var(--text); font-weight:700; font-size:14px;
+      transition:transform .15s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.28)}
+    .btn.primary{
+      border-color: rgba(251,191,36,.55);
+      background: linear-gradient(135deg, rgba(251,191,36,.95), rgba(245,158,11,.85));
+      color:#1A1308;
     }
 
-    @media (max-width: 920px){
-      .hero-grid, .contact{grid-template-columns:1fr;}
-      .grid3{grid-template-columns:1fr;}
-      .split{grid-template-columns:1fr;}
-      .nav-links{display:none;}
+    /* products */
+    .section{padding: 60px 0; border-top:1px solid var(--line)}
+    .section-head{display:flex; flex-direction:column; gap:8px; margin-bottom:28px}
+    .section-head h2{margin:0; font-size:clamp(24px, 3vw, 34px); letter-spacing:-.015em}
+    .section-head p{margin:0; color:var(--muted); max-width:60ch}
+
+    .products{display:grid; gap:18px; grid-template-columns: repeat(2, 1fr)}
+    @media (max-width: 860px){ .products{grid-template-columns:1fr} }
+    .product{
+      position:relative; overflow:hidden;
+      border:1px solid var(--line); border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      padding: 28px;
+      display:flex; flex-direction:column; gap:18px;
+      min-height: 340px;
+      transition: transform .2s ease, border-color .2s ease;
     }
+    .product:hover{transform:translateY(-2px); border-color:var(--line-2)}
+    .product .glow{
+      position:absolute; inset:-1px -1px auto -1px; height:1px;
+    }
+    .product.micmap .glow{background:linear-gradient(90deg, transparent, var(--amber), transparent)}
+    .product.omissia .glow{background:linear-gradient(90deg, transparent, var(--teal), transparent)}
+    .product .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      color:var(--muted); font-weight:700; font-size:12px;
+      letter-spacing:.18em; text-transform:uppercase;
+    }
+    .product .tag .swatch{width:10px; height:10px; border-radius:3px}
+    .product.micmap .swatch{background:var(--amber)}
+    .product.omissia .swatch{background:var(--teal)}
+    .product h3{margin:0; font-size:28px; letter-spacing:-.01em; font-weight:800}
+    .product .pitch{color:var(--text); font-size:15.5px; margin:0}
+    .product .meta{color:var(--muted); font-size:13.5px; margin:0}
+    .product .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:auto}
+    .chip{
+      font-size:12px; font-weight:700; color:var(--muted);
+      border:1px solid var(--line); padding:6px 10px; border-radius:999px;
+      background:rgba(0,0,0,.18);
+    }
+    .product .cta{
+      display:inline-flex; align-items:center; gap:8px;
+      font-weight:800; font-size:14px;
+    }
+    .product.micmap .cta{color:var(--amber)}
+    .product.omissia .cta{color:var(--teal)}
+    .product .cta .arr{transition:transform .2s ease}
+    .product:hover .cta .arr{transform:translateX(4px)}
+
+    /* about / mandate */
+    .two-col{display:grid; gap:22px; grid-template-columns: 1.1fr .9fr}
+    @media (max-width: 860px){ .two-col{grid-template-columns:1fr} }
+    .card{
+      border:1px solid var(--line); border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      padding:22px;
+    }
+    .card h3{margin:0 0 8px; font-size:18px}
+    .card p{margin:0; color:var(--muted); font-size:15px}
+    .grid3{display:grid; gap:14px; grid-template-columns: repeat(3, 1fr)}
+    @media (max-width: 720px){ .grid3{grid-template-columns:1fr} }
+    .stat{padding:18px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.18)}
+    .stat .n{font-weight:900; font-size:22px; letter-spacing:-.01em}
+    .stat .l{color:var(--muted); font-weight:700; font-size:12px; margin-top:4px; text-transform:uppercase; letter-spacing:.16em}
+
+    /* company */
+    .reg{display:grid; gap:12px; grid-template-columns: repeat(2, 1fr); margin-top:16px}
+    @media (max-width: 720px){ .reg{grid-template-columns:1fr} }
+    .reg .row-r{display:flex; justify-content:space-between; gap:14px; padding:14px 16px; border:1px solid var(--line); border-radius:12px; background:rgba(0,0,0,.18)}
+    .reg .row-r .k{color:var(--muted); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.14em}
+    .reg .row-r .v{color:var(--text); font-weight:700; font-size:14px; text-align:right}
+
+    /* contact */
+    .contact-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:14px}
+    .contact-row a{
+      border:1px solid var(--line); padding:12px 14px; border-radius:12px;
+      background:rgba(0,0,0,.18); font-weight:700; font-size:14px;
+    }
+    .contact-row a:hover{border-color:var(--line-2)}
+
+    footer{
+      padding: 38px 0 60px; color:var(--muted); font-size:13px;
+      border-top:1px solid var(--line); margin-top:40px;
+    }
+    .foot{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap}
+    .foot .brand-mini{display:flex; align-items:center; gap:10px; color:var(--text); font-weight:800; letter-spacing:.14em; font-size:13px}
   </style>
-
-  <!-- Organization Schema (helps Google understand your business) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"Organization",
-    "name":"Citadene Technologies",
-    "url":"https://YOURDOMAIN.co.za/",
-    "logo":"https://YOURDOMAIN.co.za/logo.png",
-    "sameAs":[
-      "https://www.linkedin.com/company/107069335/admin/dashboard/"
-    ],
-    "description":"Citadene Technologies builds rugged IoT monitoring systems for remote and pole-mounted assets, with alerting, mapping and dashboards.",
-    "address":{
-      "@type":"PostalAddress",
-      "addressCountry":"ZA"
-    }
-  }
-  </script>
 </head>
-
 <body>
-  <div class="nav">
-    <div class="wrap nav-inner">
-      <a class="brand" href="#top" aria-label="Citadene Technologies home">
-        <span class="logo" aria-hidden="true"></span>
-        <span>Citadene Technologies</span>
-      </a>
 
-      <div class="nav-links" role="navigation" aria-label="Primary">
-        <a href="#solutions">Solutions</a>
-        <a href="#platform">Platform</a>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="brand"><span class="logo" aria-hidden="true"></span>Citadene</a>
+      <div class="nav-links">
+        <a href="#products">Products</a>
         <a href="#about">About</a>
+        <a href="#company">Company</a>
         <a href="#contact">Contact</a>
       </div>
-
-      <!-- Get a demo opens email -->
-      <a class="btn primary" href="mailto:support@citadene.co.za?subject=Demo%20Request%20-%20Citadene%20Technologies">Get a demo</a>
     </div>
-  </div>
+  </nav>
 
-  <main id="top">
-    <section class="hero">
-      <div class="wrap hero-grid">
-        <div>
-          <div class="kicker">IoT Monitoring • Alerts • Mapping</div>
-          <h1>Know when an asset moves, falls, or goes offline — instantly.</h1>
-          <p class="lead">
-            Citadene Technologies builds rugged sensor monitoring systems for pole-mounted and remote assets.
-            Track status changes (upright/fallen), visualize locations on a map, and trigger alerts when something changes.
-          </p>
+  <header id="top" class="hero">
+    <div class="wrap">
+      <span class="kicker"><span class="dot"></span>Citadene Technologies (Pty) Ltd · Johannesburg</span>
+      <h1>Software for the operations that <span class="hl-a">move</span> and <span class="hl-b">account for</span> South Africa.</h1>
+      <p class="lede">Citadene builds operational software for South African industry — the parent company behind <strong>MicMap</strong>, a fleet & compliance platform for road transporters, and <strong>Omissia</strong>, a revenue-assurance layer for toll operations. Two products, one mandate: turn the systems that already exist into ones you can actually run a business on.</p>
+      <div class="cta-row">
+        <a href="#products" class="btn primary">See our products</a>
+        <a href="#contact" class="btn">Get in touch</a>
+      </div>
+    </div>
+  </header>
 
-          <div class="cta-row">
-            <!-- Request a demo opens email -->
-            <a class="btn primary" href="mailto:support@citadene.co.za?subject=Demo%20Request%20-%20Citadene%20Technologies">Request a demo</a>
-            <a class="btn" href="#solutions">See solutions</a>
+  <section id="products" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Two products. One operating philosophy.</h2>
+        <p>Built in South Africa, for the realities of South African operations — load shedding, intermittent connectivity, mixed-fleet compliance, real money on the line. Both products ship the same way: shipped over scaffolded, plain-English over jargon.</p>
+      </div>
+
+      <div class="products">
+        <a class="product micmap" href="https://www.micmap.co.za" target="_blank" rel="noopener">
+          <span class="glow"></span>
+          <span class="tag"><span class="swatch"></span>MicMap · Live</span>
+          <h3>Fleet & compliance, made simple.</h3>
+          <p class="pitch">A complete operations platform for South African road transporters — trip planning, gate passes, driver PWA, document expiry tracking, fuel analytics, waybills, freight invoicing, and per-customer rate cards. Built for owners who'd rather drive the business than the spreadsheet.</p>
+          <p class="meta">Live at <strong>micmap.co.za</strong> · R299 per truck per month · invoice & EFT billing · POPIA-aligned.</p>
+          <div class="row">
+            <span class="chip">Fleet ops</span>
+            <span class="chip">SA compliance</span>
+            <span class="chip">Driver PWA</span>
+            <span class="chip">Freight invoicing</span>
           </div>
+          <span class="cta">Visit micmap.co.za <span class="arr">→</span></span>
+        </a>
 
-          <div style="margin-top:14px" class="pill">
-            <span class="dot" aria-hidden="true"></span>
-            Built for harsh environments • Low-power • Scalable deployments
+        <a class="product omissia" href="#contact">
+          <span class="glow"></span>
+          <span class="tag"><span class="swatch"></span>Omissia · Pre-pilot</span>
+          <h3>Toll revenue assurance, the same day it happens.</h3>
+          <p class="pitch">A reconciliation layer for toll operations that ties ANPR, transaction, e-tag, settlement, weighbridge and GPS feeds back together — and flags the gap the moment it opens, instead of the moment an audit finds it months later.</p>
+          <p class="meta">Pre-pilot. Available for select toll operators and concessionaires looking for revenue-leakage visibility on top of their existing stack.</p>
+          <div class="row">
+            <span class="chip">Toll ops</span>
+            <span class="chip">Revenue assurance</span>
+            <span class="chip">ANPR + GPS</span>
+            <span class="chip">Pilot-ready</span>
           </div>
+          <span class="cta">Request a pilot <span class="arr">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What Citadene is.</h2>
+        <p>A privately held South African software company. We don't take outside capital, we don't sell vapourware, and we don't quote on integrations we can't deliver. Every product we ship has to stand on its own commercially.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>Our mandate</h3>
+          <p>Every operation in this country runs on a mix of paper, WhatsApp, spreadsheets and legacy systems that were good twenty years ago. Citadene builds the operational software that closes those gaps — the kind of software that gets used at 4am at a depot, not just demoed in a boardroom. We work in narrow problem spaces (fleet, tolling) where the gap between "what the system says" and "what actually happened" is where all the money is.</p>
         </div>
 
-        <div class="card hero-card">
-          <div>
-            <div class="pill" style="margin-bottom:12px;">
-              <span class="dot" aria-hidden="true"></span>
-              Live status overview
-            </div>
-
-            <div class="mini">
-              <div class="stat">
-                <div class="n">Upright</div>
-                <div class="l">Normal operating state</div>
-              </div>
-              <div class="stat">
-                <div class="n">Fallen</div>
-                <div class="l">Tilt / movement detected</div>
-              </div>
-              <div class="stat">
-                <div class="n">Offline</div>
-                <div class="l">No heartbeat / comms</div>
-              </div>
-              <div class="stat">
-                <div class="n">Map View</div>
-                <div class="l">Location + geofence alerts</div>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:16px; border-top:1px solid var(--line); padding-top:14px;">
-            <div class="small" style="color:var(--muted); font-weight:800; letter-spacing:.12em; text-transform:uppercase;">
-              Typical Use Cases
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-              <span class="badge">Pole-mounted sensors</span>
-              <span class="badge">Remote assets</span>
-              <span class="badge">Infrastructure monitoring</span>
-              <span class="badge">Field deployments</span>
-            </div>
-          </div>
+        <div class="card">
+          <h3>How we work</h3>
+          <p>Small team, high standards, no agency model. Software is written by the people accountable for it. Pilots are paid and time-boxed. Customers own their data. We default to plain English in contracts and documentation. POPIA-aligned across every product.</p>
         </div>
       </div>
-    </section>
 
-    <section id="solutions" class="section">
-      <div class="wrap">
-        <h2>Solutions</h2>
-        <p>Practical monitoring that teams can deploy and scale without complicated infrastructure.</p>
-
-        <div class="grid3">
-          <div class="feature">
-            <div class="icon">⚡</div>
-            <h3>Instant alerts</h3>
-            <p>Receive notifications when an asset changes state (movement, tilt, vibration), goes offline, or crosses a geofence.</p>
-          </div>
-          <div class="feature">
-            <div class="icon">🗺️</div>
-            <h3>Map visibility</h3>
-            <p>View assets on a clean map with filtering, status colors, and location-specific history.</p>
-          </div>
-          <div class="feature">
-            <div class="icon">🔋</div>
-            <h3>Low power design</h3>
-            <p>Optimized sleep + heartbeat logic for long runtime, with health checks to confirm devices are alive.</p>
-          </div>
+      <div class="grid3" style="margin-top:18px">
+        <div class="stat">
+          <div class="n">2 products</div>
+          <div class="l">MicMap (live) · Omissia (pre-pilot)</div>
+        </div>
+        <div class="stat">
+          <div class="n">SA-built</div>
+          <div class="l">Johannesburg-based, South African owned</div>
+        </div>
+        <div class="stat">
+          <div class="n">No outside capital</div>
+          <div class="l">Founder-owned, customer-funded</div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="platform" class="section">
-      <div class="wrap">
-        <h2>Platform</h2>
-        <p>From device telemetry to dashboards, designed for reliability and clarity.</p>
-
-        <div class="split">
-          <div class="box">
-            <h3 style="margin:0 0 6px;">Device layer</h3>
-            <p style="margin:0; color:var(--muted); font-size:14px;">
-              Sensor logic for tilt/state detection, periodic heartbeats, and event-driven reporting.
-            </p>
-            <ul class="list">
-              <li>Motion/tilt detection (upright/fallen)</li>
-              <li>Heartbeat + offline detection</li>
-              <li>Secure device identity + provisioning</li>
-              <li>Event buffering for intermittent coverage</li>
-            </ul>
-          </div>
-
-          <div class="box">
-            <h3 style="margin:0 0 6px;">App & dashboard</h3>
-            <p style="margin:0; color:var(--muted); font-size:14px;">
-              A simple interface that shows “what changed”, “where”, and “what to do next”.
-            </p>
-            <ul class="list">
-              <li>Map view + search + filters</li>
-              <li>Status timeline per asset</li>
-              <li>Geofence rules + alerts</li>
-              <li>Exportable reports</li>
-            </ul>
-          </div>
-        </div>
+  <section id="company" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>The company.</h2>
+        <p>Citadene Technologies (Pty) Ltd is a South African private company holding the intellectual property and operations behind MicMap and Omissia. Founded and 50/50 owned by Corné Botha and Heinrich Potgieter.</p>
       </div>
-    </section>
 
-    <section id="about" class="section">
-      <div class="wrap">
-        <h2>About Citadene</h2>
-        <p>
-          We build monitoring tech that is rugged, scalable, and easy for teams to use.
-          The goal: faster response times, clearer visibility, and fewer surprises in the field.
-        </p>
-
-        <div class="grid3">
-          <div class="feature">
-            <div class="icon">🛡️</div>
-            <h3>Built for real-world conditions</h3>
-            <p>Hardware-first thinking, with reliability and maintainability in mind.</p>
-          </div>
-          <div class="feature">
-            <div class="icon">📈</div>
-            <h3>Designed to scale</h3>
-            <p>From dozens to thousands of assets, with consistent status rules and dashboards.</p>
-          </div>
-          <div class="feature">
-            <div class="icon">🤝</div>
-            <h3>Partnership approach</h3>
-            <p>We work closely with clients to tailor alerts, map layouts, and workflows.</p>
-          </div>
-        </div>
+      <div class="reg">
+        <div class="row-r"><span class="k">Registered name</span><span class="v">Citadene Technologies (Pty) Ltd</span></div>
+        <div class="row-r"><span class="k">CIPC registration</span><span class="v">2025/296372/07</span></div>
+        <div class="row-r"><span class="k">Founders</span><span class="v">Corné Botha · Heinrich Potgieter</span></div>
+        <div class="row-r"><span class="k">Jurisdiction</span><span class="v">South Africa</span></div>
+        <div class="row-r"><span class="k">Subsidiaries / brands</span><span class="v">MicMap · Omissia</span></div>
+        <div class="row-r"><span class="k">Head office</span><span class="v">Johannesburg, Gauteng</span></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="contact" class="section">
-      <div class="wrap">
-        <h2>Contact</h2>
-        <p>Tell us what you’re monitoring and we’ll suggest a deployment approach.</p>
-
-        <div class="contact">
-          <div class="box">
-            <!-- NETLIFY FORMS ENABLED -->
-            <form name="contact" method="POST" data-netlify="true">
-              <input type="hidden" name="form-name" value="contact">
-
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <div>
-                  <label for="name">Name</label>
-                  <input id="name" name="name" placeholder="Your name" required />
-                </div>
-                <div>
-                  <label for="email">Email</label>
-                  <input id="email" name="email" type="email" placeholder="you@company.com" required />
-                </div>
-              </div>
-
-              <div style="margin-top:12px;">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="What are you monitoring? How many assets? Where?" required></textarea>
-              </div>
-
-              <div class="cta-row" style="margin-top:12px;">
-                <button class="btn primary" type="submit">Send message</button>
-                <a class="btn" href="mailto:support@citadene.co.za">Email directly</a>
-              </div>
-
-              <p class="small" style="margin-top:10px; color:var(--muted);">
-                We’ll get back to you as soon as possible.
-              </p>
-            </form>
-          </div>
-
-          <div class="box">
-            <h3 style="margin:0 0 10px;">Company details</h3>
-
-            <div class="small" style="color:var(--muted); display:grid; gap:10px;">
-              <div>
-                <strong style="color:var(--text)">Citadene Technologies</strong><br/>
-                South Africa
-              </div>
-
-              <div>
-                <strong style="color:var(--text)">Email:</strong>
-                <a href="mailto:support@citadene.co.za">support@citadene.co.za</a>
-              </div>
-
-              <div>
-                <strong style="color:var(--text)">Phone:</strong>
-                <a href="tel:0829339132">082 933 9132</a>
-              </div>
-
-              <div>
-                <strong style="color:var(--text)">LinkedIn:</strong>
-                <a href="https://www.linkedin.com/company/107069335/admin/dashboard/" target="_blank" rel="noopener noreferrer">
-                  Citadene Technologies
-                </a>
-              </div>
-            </div>
-
-            <div style="margin-top:14px;" class="pill">
-              <span class="dot" aria-hidden="true"></span>
-              For demos, click “Get a demo” to email support@citadene.co.za
-            </div>
-          </div>
-        </div>
+  <section id="contact" class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Get in touch.</h2>
+        <p>Pilots, partnerships, procurement and press — one inbox. We answer everything that comes in personally.</p>
       </div>
-    </section>
 
-    <footer class="footer">
-      <div class="wrap row">
-        <div class="small">© <span id="year"></span> Citadene Technologies. All rights reserved.</div>
-        <div class="small" style="display:flex; gap:12px; align-items:center;">
-          <a href="#top">Back to top</a>
-          <span style="opacity:.4;">•</span>
-          <a href="#contact">Contact</a>
-        </div>
+      <div class="contact-row">
+        <a href="mailto:corneb@micmap.co.za">corneb@micmap.co.za</a>
+        <a href="https://www.micmap.co.za" target="_blank" rel="noopener">micmap.co.za</a>
+        <a href="#products">Our products</a>
       </div>
-    </footer>
-  </main>
+    </div>
+  </section>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <footer>
+    <div class="wrap foot">
+      <div class="brand-mini"><span class="logo" style="width:24px;height:24px;border-radius:8px"></span>Citadene Technologies (Pty) Ltd</div>
+      <div>© <span id="yr">2026</span> Citadene Technologies (Pty) Ltd · Reg 2025/296372/07 · South Africa</div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
