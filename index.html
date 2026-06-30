@@ -112,25 +112,15 @@
     }
     .hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
 
-    /* Logo-wave: the Citadene mark's 10 rotated rings, traced in dots that
-       pulse in a wave sweeping round each ring, phase-offset ring to ring.
-       Built from the same geometry as #citadene-mark, not a stock effect. */
-    .hero-mark-wave{
+    /* Hero spirograph: a generative hypotrochoid drawn live on canvas,
+       slowly morphing forever. Brand-colored (MicMap amber <-> Omissia
+       navy), transparent background so it sits in the page, not a box. */
+    .hero-spiro{
       position:absolute; z-index:0; pointer-events:none;
-      top:-16%; right:-12%; width:min(840px, 82vw); height:auto;
-      opacity:.85;
+      top:-14%; right:-10%; width:min(760px, 76vw); height:auto;
+      opacity:.6;
     }
-    .hero-mark-wave circle{
-      transform-box:fill-box; transform-origin:center;
-      animation:dotWave 4.2s ease-in-out infinite;
-    }
-    @keyframes dotWave{
-      0%,100%{opacity:.1; transform:scale(.5)}
-      50%{opacity:1; transform:scale(1)}
-    }
-    @media (prefers-reduced-motion: reduce){
-      .hero-mark-wave circle{animation:none; opacity:.45; transform:scale(.8)}
-    }
+    @media (prefers-reduced-motion: reduce){ .hero-spiro{opacity:.4} }
 
     /* Hero on-load reveal — runs immediately, not scroll-gated (hero is always above the fold) */
     @keyframes heroIn{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
@@ -478,7 +468,7 @@
   </nav>
 
   <header id="top" class="hero">
-    <svg class="hero-mark-wave" id="heroMarkWave" viewBox="0 0 600 600" aria-hidden="true"></svg>
+    <canvas class="hero-spiro" id="heroSpiro" width="700" height="700" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="hero-grid">
         <div>
@@ -705,52 +695,56 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.rv').forEach(el => io.observe(el));
 
-    // Hero logo-wave: traces #citadene-mark's EXACT geometry, scaled 5x
-    // (mark viewBox 120 -> hero viewBox 600). The mark is a trefoil of
-    // three petals at 0°/120°/240°; each petal is 7 ellipses fanned ±18°,
-    // but — critically — each ellipse is OFFSET outward (cx=110, not 0)
-    // before being rotated, not centered on the shared point. A centered
-    // ellipse's full outline touches every angle around its own center no
-    // matter how it's rotated, so centered fans always read as a circle;
-    // offsetting is what makes each petal a loop that points outward with
-    // real gaps between the three. Dots pulse in a wave that sweeps lobe to
-    // lobe and ellipse to ellipse, fading from MicMap amber to Omissia navy.
+    // Hero spirograph: a hypotrochoid (rolling-circle) curve, redrawn every
+    // frame with R/r/d drifting slowly so the shape never repeats exactly —
+    // an evolving generative line rather than a static logo trace. Recolored
+    // from neon-on-black to a slow breathe between MicMap amber and Omissia
+    // navy, on a transparent canvas so it sits in the page, not its own box.
     (function () {
-      const svg = document.getElementById('heroMarkWave');
-      if (!svg) return;
-      const NS = 'http://www.w3.org/2000/svg';
-      const LOBES = [0, 120, 240];
-      const LOCAL_ANGLES = [-18, -12, -6, 0, 6, 12, 18];
-      const PTS_PER_ELLIPSE = 18;
-      const D = 110, RX = 130, RY = 55, CX = 300, CY = 300;
-      const SWEEP = 4.2, STEP_PHASE = 0.12, LOBE_PHASE = 0.5;
-      const colorA = [0xF2, 0xB7, 0x05]; // MicMap amber
-      const colorB = [0x16, 0x20, 0x4A]; // Omissia navy
+      const canvas = document.getElementById('heroSpiro');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const amber = [0xF2, 0xB7, 0x05], navy = [0x16, 0x20, 0x4A];
       const lerp = (a, b, t) => Math.round(a + (b - a) * t);
-      const frag = document.createDocumentFragment();
-      LOBES.forEach((lobeAngle, li) => {
-        LOCAL_ANGLES.forEach((localAngle, i) => {
-          const rad = (lobeAngle + localAngle) * Math.PI / 180;
-          const cos = Math.cos(rad), sin = Math.sin(rad);
-          const t = i / (LOCAL_ANGLES.length - 1);
-          const color = `rgb(${lerp(colorA[0], colorB[0], t)},${lerp(colorA[1], colorB[1], t)},${lerp(colorA[2], colorB[2], t)})`;
-          for (let j = 0; j < PTS_PER_ELLIPSE; j++) {
-            const a = (j / PTS_PER_ELLIPSE) * Math.PI * 2;
-            const ex = D + RX * Math.cos(a), ey = RY * Math.sin(a);
-            const x = CX + ex * cos - ey * sin;
-            const y = CY + ex * sin + ey * cos;
-            const delay = (((a / (Math.PI * 2)) * SWEEP) + i * STEP_PHASE + li * LOBE_PHASE) % SWEEP;
-            const dot = document.createElementNS(NS, 'circle');
-            dot.setAttribute('cx', x.toFixed(2));
-            dot.setAttribute('cy', y.toFixed(2));
-            dot.setAttribute('r', '2.4');
-            dot.setAttribute('fill', color);
-            dot.style.animationDelay = delay.toFixed(3) + 's';
-            frag.appendChild(dot);
-          }
-        });
-      });
-      svg.appendChild(frag);
+      const R = 300; // fixed circle radius; r/d drift around their base each frame
+      let angle = 0;
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.save();
+        ctx.translate(W / 2, H / 2);
+
+        const r = 90 + 25 * Math.sin(angle / 50);
+        const d = 75 + 30 * Math.cos(angle / 30);
+        const tone = (Math.sin(angle / 80) + 1) / 2;
+        const cr = lerp(amber[0], navy[0], tone), cg = lerp(amber[1], navy[1], tone), cb = lerp(amber[2], navy[2], tone);
+
+        ctx.strokeStyle = `rgb(${cr},${cg},${cb})`;
+        ctx.lineWidth = 1.6;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(${cr},${cg},${cb},.45)`;
+
+        ctx.beginPath();
+        for (let i = 0; i < 800; i++) {
+          const theta = i * 0.05;
+          const x = (R - r) * Math.cos(theta) + d * Math.cos(((R - r) / r) * theta);
+          const y = (R - r) * Math.sin(theta) - d * Math.sin(((R - r) / r) * theta);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        draw();
+        return;
+      }
+      (function loop() {
+        angle += 0.3;
+        draw();
+        requestAnimationFrame(loop);
+      })();
     })();
   </script>
 </body>
