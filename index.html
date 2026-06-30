@@ -103,27 +103,34 @@
 
     /* ===== Hero (Accenture-style split: text + featured visual) ===== */
     .hero{padding:60px 0 90px; position:relative; overflow:hidden}
-    .hero::before, .hero::after{
+    .hero::after{
       content:"";
       position:absolute; inset:-12% -8% auto -8%; height:150%;
       pointer-events:none; z-index:0;
-    }
-    .hero::before{
-      background:
-        radial-gradient(620px 420px at 6% -10%, rgba(242,183,5,.16), transparent 60%),
-        radial-gradient(680px 460px at 98% 2%, rgba(22,32,74,.12), transparent 58%);
-      animation:heroDrift 22s ease-in-out infinite alternate;
-    }
-    .hero::after{
-      background: radial-gradient(rgba(15,15,20,.05) 1px, transparent 1px);
+      background: radial-gradient(rgba(15,15,20,.045) 1px, transparent 1px);
       background-size:25px 25px;
     }
-    @keyframes heroDrift{
-      0%{ transform:translate(0,0) scale(1) }
-      100%{ transform:translate(-2.5%,2%) scale(1.04) }
-    }
-    @media (prefers-reduced-motion: reduce){ .hero::before{animation:none} }
     .hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
+
+    /* Logo-wave: the Citadene mark's 10 rotated rings, traced in dots that
+       pulse in a wave sweeping round each ring, phase-offset ring to ring.
+       Built from the same geometry as #citadene-mark, not a stock effect. */
+    .hero-mark-wave{
+      position:absolute; z-index:0; pointer-events:none;
+      top:-16%; right:-12%; width:min(840px, 82vw); height:auto;
+      opacity:.85;
+    }
+    .hero-mark-wave circle{
+      transform-box:fill-box; transform-origin:center;
+      animation:dotWave 4.2s ease-in-out infinite;
+    }
+    @keyframes dotWave{
+      0%,100%{opacity:.1; transform:scale(.5)}
+      50%{opacity:1; transform:scale(1)}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .hero-mark-wave circle{animation:none; opacity:.45; transform:scale(.8)}
+    }
 
     /* Hero on-load reveal — runs immediately, not scroll-gated (hero is always above the fold) */
     @keyframes heroIn{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
@@ -440,6 +447,7 @@
   </nav>
 
   <header id="top" class="hero">
+    <svg class="hero-mark-wave" id="heroMarkWave" viewBox="0 0 600 600" aria-hidden="true"></svg>
     <div class="wrap">
       <div class="hero-grid">
         <div>
@@ -665,6 +673,44 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
     }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+    // Hero logo-wave: trace the same 10 rotated ellipses as #citadene-mark
+    // (rx 36 / ry 22 / 18° steps in the mark's own 120-unit viewBox) as a
+    // ring of dots, then pulse them in a wave that sweeps round each ring,
+    // phase-offset ring to ring, fading from MicMap amber to Omissia navy.
+    (function () {
+      const svg = document.getElementById('heroMarkWave');
+      if (!svg) return;
+      const NS = 'http://www.w3.org/2000/svg';
+      const RINGS = 10, ROT_STEP = 18, PTS_PER_RING = 22;
+      const RX = 160, RY = 98, CX = 300, CY = 300;
+      const SWEEP = 4.2, RING_PHASE = 0.12;
+      const colorA = [0xF2, 0xB7, 0x05]; // MicMap amber
+      const colorB = [0x16, 0x20, 0x4A]; // Omissia navy
+      const lerp = (a, b, t) => Math.round(a + (b - a) * t);
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < RINGS; i++) {
+        const rad = (i * ROT_STEP) * Math.PI / 180;
+        const cos = Math.cos(rad), sin = Math.sin(rad);
+        const t = i / (RINGS - 1);
+        const color = `rgb(${lerp(colorA[0], colorB[0], t)},${lerp(colorA[1], colorB[1], t)},${lerp(colorA[2], colorB[2], t)})`;
+        for (let j = 0; j < PTS_PER_RING; j++) {
+          const a = (j / PTS_PER_RING) * Math.PI * 2;
+          const ex = RX * Math.cos(a), ey = RY * Math.sin(a);
+          const x = CX + ex * cos - ey * sin;
+          const y = CY + ex * sin + ey * cos;
+          const delay = (((a / (Math.PI * 2)) * SWEEP) + i * RING_PHASE) % SWEEP;
+          const dot = document.createElementNS(NS, 'circle');
+          dot.setAttribute('cx', x.toFixed(2));
+          dot.setAttribute('cy', y.toFixed(2));
+          dot.setAttribute('r', '2.6');
+          dot.setAttribute('fill', color);
+          dot.style.animationDelay = delay.toFixed(3) + 's';
+          frag.appendChild(dot);
+        }
+      }
+      svg.appendChild(frag);
+    })();
   </script>
 </body>
 </html>
