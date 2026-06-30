@@ -11,8 +11,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://citadene.co.za/" />
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23F2B705'/%3E%3Cpath d='M14 50V14h8l10 18 10-18h8v36h-8V26L34 42h-4L22 26v24h-8z' fill='%231A1303'/%3E%3C/svg%3E" />
-
+  <link rel="icon" type="image/png" href="./logo.png">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -33,8 +33,9 @@
 
       --micmap:#F2B705;
       --micmap-ink:#1A1303;
-      --omissia:#0F6B5C;
-      --omissia-tint:#0F6B5C12;
+      --omissia:#16204A;
+      --omissia-tint:#16204A14;
+      --omissia-cream:#F5F1E6;
 
       --radius:14px;
       --radius-lg:22px;
@@ -139,8 +140,9 @@
       background:linear-gradient(135deg,#F2B705 0%, #D89E00 100%);
       display:flex; align-items:center; justify-content:center;
     }
-    .hp-tile-visual.omissia{background:linear-gradient(135deg,#0F6B5C 0%, #094B41 100%)}
+    .hp-tile-visual.omissia{background:linear-gradient(135deg, var(--omissia-cream) 0%, #EAE4D3 100%)}
     .hp-mark{width:62%; height:62%; filter:drop-shadow(0 4px 10px rgba(0,0,0,.18))}
+    .hp-mark-img{width:72%; height:72%; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,.12))}
     .hp-tile-body{display:flex; flex-direction:column; gap:8px; min-width:0}
     .hp-tile-top{display:flex; align-items:center; gap:10px}
     .hp-tile-name{font-weight:800; font-size:18px; letter-spacing:-.005em}
@@ -247,8 +249,8 @@
     }
     .spot-visual.omissia{
       background:
-        radial-gradient(circle at 70% 30%, rgba(255,255,255,.08), transparent 55%),
-        linear-gradient(135deg, #0F6B5C 0%, #094B41 100%);
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,.5), transparent 55%),
+        linear-gradient(135deg, var(--omissia-cream) 0%, #EAE4D3 100%);
     }
     .spot-visual .grid-bg{
       position:absolute; inset:0; opacity:.16;
@@ -259,19 +261,20 @@
     }
     .spot-visual.omissia .grid-bg{
       background-image:
-        linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+        linear-gradient(rgba(22,32,74,.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22,32,74,.10) 1px, transparent 1px);
     }
     .spot-visual .badge-area{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:30px}
     .big-mark{width:min(58%, 220px); aspect-ratio:1; filter:drop-shadow(0 14px 30px rgba(0,0,0,.25))}
+    .big-mark-img{width:min(64%, 260px); object-fit:contain; filter:drop-shadow(0 10px 24px rgba(0,0,0,.16))}
     .spot-visual .corner-label{
       position:absolute; top:24px; left:24px; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; font-weight:700;
     }
     .spot-visual.micmap .corner-label{color:rgba(26,19,3,.7)}
-    .spot-visual.omissia .corner-label{color:rgba(255,255,255,.7)}
+    .spot-visual.omissia .corner-label{color:rgba(22,32,74,.65)}
     .spot-visual .corner-r{position:absolute; bottom:24px; right:24px; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700}
     .spot-visual.micmap .corner-r{color:rgba(26,19,3,.7)}
-    .spot-visual.omissia .corner-r{color:rgba(255,255,255,.7)}
+    .spot-visual.omissia .corner-r{color:rgba(22,32,74,.65)}
 
     /* ===== Stats ===== */
     .stats-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:36px}
@@ -333,13 +336,6 @@
       <symbol id="micmap-mark" viewBox="0 0 64 64">
         <rect width="64" height="64" rx="8" fill="#F2B705"/>
         <path d="M14 50V14h8l10 18 10-18h8v36h-8V26L34 42h-4L22 26v24h-8z" fill="#1A1303"/>
-      </symbol>
-      <!-- Omissia: concentric reconciliation rings -->
-      <symbol id="omissia-mark" viewBox="0 0 64 64">
-        <rect width="64" height="64" rx="8" fill="#0F6B5C"/>
-        <circle cx="32" cy="32" r="18" stroke="#F3F2EE" stroke-width="3" fill="none"/>
-        <circle cx="32" cy="32" r="10" stroke="#F3F2EE" stroke-width="2" fill="none" opacity=".55"/>
-        <circle cx="32" cy="32" r="3" fill="#F3F2EE"/>
       </symbol>
       <!-- Citadene mark — three overlapping spirograph rings (matches the brand logo) -->
       <symbol id="citadene-mark" viewBox="0 0 120 120">
@@ -444,7 +440,7 @@
           </a>
           <a class="hp-tile omissia-tile" href="#products">
             <div class="hp-tile-visual omissia">
-              <svg class="hp-mark"><use href="#omissia-mark"/></svg>
+              <img class="hp-mark-img" src="omissia-logo.jpg" alt="Omissia" />
             </div>
             <div class="hp-tile-body">
               <div class="hp-tile-top">
@@ -526,7 +522,7 @@
             <div class="grid-bg"></div>
             <span class="corner-label">O / 02</span>
             <div class="badge-area">
-              <svg class="big-mark"><use href="#omissia-mark"/></svg>
+              <img class="big-mark-img" src="omissia-logo.jpg" alt="Omissia" />
             </div>
             <span class="corner-r">Pre-pilot</span>
           </div>
