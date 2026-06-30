@@ -142,7 +142,18 @@
       line-height:1.08; letter-spacing:-.02em; font-weight:800;
     }
     h1 em{font-style:normal; font-weight:400; color:var(--muted)}
+    h1 .strike{position:relative; display:inline-block}
+    h1 .strike::after{
+      content:""; position:absolute; left:-2%; right:-2%; top:54%; height:3px;
+      background:var(--micmap); border-radius:2px; transform-origin:left;
+      transform:scaleX(0); animation:strikeIn .45s var(--ease) 1.05s both;
+    }
+    @keyframes strikeIn{to{transform:scaleX(1)}}
+    @media (prefers-reduced-motion: reduce){ h1 .strike::after{animation:none; transform:scaleX(1)} }
     .lede{color:var(--ink-soft); font-size:17px; max-width:54ch; margin:0 0 32px; line-height:1.6}
+    .lede .brand-word{cursor:default; border-bottom:1.5px dotted transparent; transition:border-color .25s var(--ease), color .25s var(--ease)}
+    .lede .brand-word.brand-micmap:hover{border-color:var(--micmap); color:#9A6B00}
+    .lede .brand-word.brand-omissia:hover{border-color:var(--omissia); color:var(--omissia)}
     .cta-row{display:flex; gap:22px; flex-wrap:wrap; align-items:center}
 
     /* Hero feature panel — Accenture-style image card */
@@ -473,8 +484,8 @@
       <div class="hero-grid">
         <div>
           <div class="est hero-in" style="--hd:0s"><span class="bar"></span><span class="tracked-sm">Est. 2025 · Johannesburg</span></div>
-          <h1 class="hero-in" style="--hd:.08s">We build software for the operation. <em>Not the boardroom.</em></h1>
-          <p class="lede hero-in" style="--hd:.16s">Citadene Technologies (Pty) Ltd is a privately owned South African software company — no outside capital, no agency model, software written by the people accountable for it. <strong>MicMap</strong> and <strong>Omissia</strong> are what that looks like in production today.</p>
+          <h1 class="hero-in" style="--hd:.08s">We build software for the operation. <em>Not <span class="strike">the boardroom</span>.</em></h1>
+          <p class="lede hero-in" style="--hd:.16s">Citadene Technologies (Pty) Ltd is a privately owned South African software company — no outside capital, no agency model, software written by the people accountable for it. <strong class="brand-word brand-micmap">MicMap</strong> and <strong class="brand-word brand-omissia">Omissia</strong> are what that looks like in production today.</p>
           <div class="cta-row hero-in" style="--hd:.24s">
             <a href="#products" class="btn primary">See our products</a>
             <a href="#contact" class="link-arrow">Talk to us <span class="arr">→</span></a>
@@ -700,6 +711,8 @@
     // an evolving generative line rather than a static logo trace. Recolored
     // from neon-on-black to a slow breathe between MicMap amber and Omissia
     // navy, on a transparent canvas so it sits in the page, not its own box.
+    // Naming MicMap or Omissia in the lede (.brand-word) pulls the breathe
+    // toward that brand's color — the background actually listens to the copy.
     (function () {
       const canvas = document.getElementById('heroSpiro');
       if (!canvas) return;
@@ -709,6 +722,17 @@
       const lerp = (a, b, t) => Math.round(a + (b - a) * t);
       const R = 300; // fixed circle radius; r/d drift around their base each frame
       let angle = 0;
+      let toneBias = null; // null = natural drift; 0 = pulled to amber; 1 = pulled to navy
+      let renderedTone = 0.5;
+
+      document.querySelectorAll('.brand-micmap').forEach(el => {
+        el.addEventListener('mouseenter', () => toneBias = 0);
+        el.addEventListener('mouseleave', () => toneBias = null);
+      });
+      document.querySelectorAll('.brand-omissia').forEach(el => {
+        el.addEventListener('mouseenter', () => toneBias = 1);
+        el.addEventListener('mouseleave', () => toneBias = null);
+      });
 
       function draw() {
         ctx.clearRect(0, 0, W, H);
@@ -717,8 +741,10 @@
 
         const r = 90 + 25 * Math.sin(angle / 50);
         const d = 75 + 30 * Math.cos(angle / 30);
-        const tone = (Math.sin(angle / 80) + 1) / 2;
-        const cr = lerp(amber[0], navy[0], tone), cg = lerp(amber[1], navy[1], tone), cb = lerp(amber[2], navy[2], tone);
+        const naturalTone = (Math.sin(angle / 80) + 1) / 2;
+        const target = toneBias === null ? naturalTone : toneBias;
+        renderedTone += (target - renderedTone) * 0.06;
+        const cr = lerp(amber[0], navy[0], renderedTone), cg = lerp(amber[1], navy[1], renderedTone), cb = lerp(amber[2], navy[2], renderedTone);
 
         ctx.strokeStyle = `rgb(${cr},${cg},${cb})`;
         ctx.lineWidth = 1.6;
