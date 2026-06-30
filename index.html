@@ -376,11 +376,35 @@
         <rect width="64" height="64" rx="8" fill="#F2B705"/>
         <path d="M14 50V14h8l10 18 10-18h8v36h-8V26L34 42h-4L22 26v24h-8z" fill="#1A1303"/>
       </symbol>
-      <!-- Citadene mark — three overlapping spirograph rings (matches the brand logo) -->
+      <!-- Citadene mark — a trefoil of three overlapping spirograph fans at
+           0°/120°/240° around a shared center (matches the brand logo) -->
       <symbol id="citadene-mark" viewBox="0 0 120 120">
         <g transform="translate(60 60)" fill="none" stroke="#0F0F12" stroke-width="1.1" opacity=".92">
-          <!-- ring 1 -->
-          <g>
+          <g transform="rotate(0)">
+            <ellipse rx="36" ry="22"/>
+            <ellipse rx="36" ry="22" transform="rotate(18)"/>
+            <ellipse rx="36" ry="22" transform="rotate(36)"/>
+            <ellipse rx="36" ry="22" transform="rotate(54)"/>
+            <ellipse rx="36" ry="22" transform="rotate(72)"/>
+            <ellipse rx="36" ry="22" transform="rotate(90)"/>
+            <ellipse rx="36" ry="22" transform="rotate(108)"/>
+            <ellipse rx="36" ry="22" transform="rotate(126)"/>
+            <ellipse rx="36" ry="22" transform="rotate(144)"/>
+            <ellipse rx="36" ry="22" transform="rotate(162)"/>
+          </g>
+          <g transform="rotate(120)">
+            <ellipse rx="36" ry="22"/>
+            <ellipse rx="36" ry="22" transform="rotate(18)"/>
+            <ellipse rx="36" ry="22" transform="rotate(36)"/>
+            <ellipse rx="36" ry="22" transform="rotate(54)"/>
+            <ellipse rx="36" ry="22" transform="rotate(72)"/>
+            <ellipse rx="36" ry="22" transform="rotate(90)"/>
+            <ellipse rx="36" ry="22" transform="rotate(108)"/>
+            <ellipse rx="36" ry="22" transform="rotate(126)"/>
+            <ellipse rx="36" ry="22" transform="rotate(144)"/>
+            <ellipse rx="36" ry="22" transform="rotate(162)"/>
+          </g>
+          <g transform="rotate(240)">
             <ellipse rx="36" ry="22"/>
             <ellipse rx="36" ry="22" transform="rotate(18)"/>
             <ellipse rx="36" ry="22" transform="rotate(36)"/>
@@ -399,6 +423,32 @@
         <g transform="translate(180 130)" fill="none" stroke="#0F0F12" stroke-width="1.1" opacity=".94">
           <!-- three knotted ring clusters at 0°/120°/240° -->
           <g transform="rotate(0)">
+            <g>
+              <ellipse rx="60" ry="32"/>
+              <ellipse rx="60" ry="32" transform="rotate(20)"/>
+              <ellipse rx="60" ry="32" transform="rotate(40)"/>
+              <ellipse rx="60" ry="32" transform="rotate(60)"/>
+              <ellipse rx="60" ry="32" transform="rotate(80)"/>
+              <ellipse rx="60" ry="32" transform="rotate(100)"/>
+              <ellipse rx="60" ry="32" transform="rotate(120)"/>
+              <ellipse rx="60" ry="32" transform="rotate(140)"/>
+              <ellipse rx="60" ry="32" transform="rotate(160)"/>
+            </g>
+          </g>
+          <g transform="rotate(120)">
+            <g>
+              <ellipse rx="60" ry="32"/>
+              <ellipse rx="60" ry="32" transform="rotate(20)"/>
+              <ellipse rx="60" ry="32" transform="rotate(40)"/>
+              <ellipse rx="60" ry="32" transform="rotate(60)"/>
+              <ellipse rx="60" ry="32" transform="rotate(80)"/>
+              <ellipse rx="60" ry="32" transform="rotate(100)"/>
+              <ellipse rx="60" ry="32" transform="rotate(120)"/>
+              <ellipse rx="60" ry="32" transform="rotate(140)"/>
+              <ellipse rx="60" ry="32" transform="rotate(160)"/>
+            </g>
+          </g>
+          <g transform="rotate(240)">
             <g>
               <ellipse rx="60" ry="32"/>
               <ellipse rx="60" ry="32" transform="rotate(20)"/>
@@ -674,41 +724,45 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.rv').forEach(el => io.observe(el));
 
-    // Hero logo-wave: trace the same 10 rotated ellipses as #citadene-mark
-    // (rx 36 / ry 22 / 18° steps in the mark's own 120-unit viewBox) as a
-    // ring of dots, then pulse them in a wave that sweeps round each ring,
-    // phase-offset ring to ring, fading from MicMap amber to Omissia navy.
+    // Hero logo-wave: the actual Citadene mark is a TREFOIL — three copies
+    // of the same 10-ellipse fan (#citadene-mark's own rx 36/ry 22/18° steps),
+    // each copy rotated an additional 0°/120°/240° around the shared center.
+    // Trace all 30 rings in dots, then pulse them in a wave that sweeps round
+    // each ring, phase-offset ring to ring AND lobe to lobe, fading from
+    // MicMap amber to Omissia navy across each lobe's 10 rings.
     (function () {
       const svg = document.getElementById('heroMarkWave');
       if (!svg) return;
       const NS = 'http://www.w3.org/2000/svg';
-      const RINGS = 10, ROT_STEP = 18, PTS_PER_RING = 22;
+      const LOBES = [0, 120, 240], RINGS = 10, ROT_STEP = 18, PTS_PER_RING = 16;
       const RX = 160, RY = 98, CX = 300, CY = 300;
-      const SWEEP = 4.2, RING_PHASE = 0.12;
+      const SWEEP = 4.2, RING_PHASE = 0.12, LOBE_PHASE = 0.5;
       const colorA = [0xF2, 0xB7, 0x05]; // MicMap amber
       const colorB = [0x16, 0x20, 0x4A]; // Omissia navy
       const lerp = (a, b, t) => Math.round(a + (b - a) * t);
       const frag = document.createDocumentFragment();
-      for (let i = 0; i < RINGS; i++) {
-        const rad = (i * ROT_STEP) * Math.PI / 180;
-        const cos = Math.cos(rad), sin = Math.sin(rad);
-        const t = i / (RINGS - 1);
-        const color = `rgb(${lerp(colorA[0], colorB[0], t)},${lerp(colorA[1], colorB[1], t)},${lerp(colorA[2], colorB[2], t)})`;
-        for (let j = 0; j < PTS_PER_RING; j++) {
-          const a = (j / PTS_PER_RING) * Math.PI * 2;
-          const ex = RX * Math.cos(a), ey = RY * Math.sin(a);
-          const x = CX + ex * cos - ey * sin;
-          const y = CY + ex * sin + ey * cos;
-          const delay = (((a / (Math.PI * 2)) * SWEEP) + i * RING_PHASE) % SWEEP;
-          const dot = document.createElementNS(NS, 'circle');
-          dot.setAttribute('cx', x.toFixed(2));
-          dot.setAttribute('cy', y.toFixed(2));
-          dot.setAttribute('r', '2.6');
-          dot.setAttribute('fill', color);
-          dot.style.animationDelay = delay.toFixed(3) + 's';
-          frag.appendChild(dot);
+      LOBES.forEach((lobeAngle, li) => {
+        for (let i = 0; i < RINGS; i++) {
+          const rad = (lobeAngle + i * ROT_STEP) * Math.PI / 180;
+          const cos = Math.cos(rad), sin = Math.sin(rad);
+          const t = i / (RINGS - 1);
+          const color = `rgb(${lerp(colorA[0], colorB[0], t)},${lerp(colorA[1], colorB[1], t)},${lerp(colorA[2], colorB[2], t)})`;
+          for (let j = 0; j < PTS_PER_RING; j++) {
+            const a = (j / PTS_PER_RING) * Math.PI * 2;
+            const ex = RX * Math.cos(a), ey = RY * Math.sin(a);
+            const x = CX + ex * cos - ey * sin;
+            const y = CY + ex * sin + ey * cos;
+            const delay = (((a / (Math.PI * 2)) * SWEEP) + i * RING_PHASE + li * LOBE_PHASE) % SWEEP;
+            const dot = document.createElementNS(NS, 'circle');
+            dot.setAttribute('cx', x.toFixed(2));
+            dot.setAttribute('cy', y.toFixed(2));
+            dot.setAttribute('r', '2.4');
+            dot.setAttribute('fill', color);
+            dot.style.animationDelay = delay.toFixed(3) + 's';
+            frag.appendChild(dot);
+          }
         }
-      }
+      });
       svg.appendChild(frag);
     })();
   </script>
