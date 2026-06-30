@@ -102,8 +102,40 @@
     .link-arrow:hover .arr{transform:translateX(4px)}
 
     /* ===== Hero (Accenture-style split: text + featured visual) ===== */
-    .hero{padding:60px 0 90px; position:relative}
-    .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
+    .hero{padding:60px 0 90px; position:relative; overflow:hidden}
+    .hero::before, .hero::after{
+      content:"";
+      position:absolute; inset:-12% -8% auto -8%; height:150%;
+      pointer-events:none; z-index:0;
+    }
+    .hero::before{
+      background:
+        radial-gradient(620px 420px at 6% -10%, rgba(242,183,5,.16), transparent 60%),
+        radial-gradient(680px 460px at 98% 2%, rgba(22,32,74,.12), transparent 58%);
+      animation:heroDrift 22s ease-in-out infinite alternate;
+    }
+    .hero::after{
+      background: radial-gradient(rgba(15,15,20,.05) 1px, transparent 1px);
+      background-size:25px 25px;
+    }
+    @keyframes heroDrift{
+      0%{ transform:translate(0,0) scale(1) }
+      100%{ transform:translate(-2.5%,2%) scale(1.04) }
+    }
+    @media (prefers-reduced-motion: reduce){ .hero::before{animation:none} }
+    .hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
+
+    /* Hero on-load reveal — runs immediately, not scroll-gated (hero is always above the fold) */
+    @keyframes heroIn{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
+    .hero-in{animation:heroIn .8s var(--ease) both; animation-delay:var(--hd,0s)}
+    @media (prefers-reduced-motion: reduce){ .hero-in{animation:none; opacity:1; transform:none} }
+
+    /* Live-portfolio pulse */
+    .hv-live::before{animation:livePulse 2.2s ease-in-out infinite}
+    @keyframes livePulse{
+      0%,100%{box-shadow:0 0 0 4px rgba(22,163,74,.16)}
+      50%{box-shadow:0 0 0 7px rgba(22,163,74,.06)}
+    }
     @media (max-width:920px){ .hero-grid{grid-template-columns:1fr; gap:32px} }
     .est{display:inline-flex; align-items:center; gap:12px; margin-bottom:24px; color:var(--muted); font-size:11px}
     .est .bar{width:28px; height:1px; background:var(--ink); opacity:.35}
@@ -411,16 +443,16 @@
     <div class="wrap">
       <div class="hero-grid">
         <div>
-          <div class="est rv"><span class="bar"></span><span class="tracked-sm">Est. 2025 · Johannesburg</span></div>
-          <h1 class="rv rv-d1">Software for the operations that <em>move and account for</em> South Africa.</h1>
-          <p class="lede rv rv-d2">Citadene Technologies (Pty) Ltd is the parent company behind <strong>MicMap</strong>, a fleet &amp; compliance platform for road transporters, and <strong>Omissia</strong>, a revenue-assurance layer for toll operations.</p>
-          <div class="cta-row rv rv-d3">
+          <div class="est hero-in" style="--hd:0s"><span class="bar"></span><span class="tracked-sm">Est. 2025 · Johannesburg</span></div>
+          <h1 class="hero-in" style="--hd:.08s">We build software for the operation. <em>Not the boardroom.</em></h1>
+          <p class="lede hero-in" style="--hd:.16s">Citadene Technologies (Pty) Ltd is a privately owned South African software company — no outside capital, no agency model, software written by the people accountable for it. <strong>MicMap</strong> and <strong>Omissia</strong> are what that looks like in production today.</p>
+          <div class="cta-row hero-in" style="--hd:.24s">
             <a href="#products" class="btn primary">See our products</a>
             <a href="#contact" class="link-arrow">Talk to us <span class="arr">→</span></a>
           </div>
         </div>
 
-        <div class="hero-portfolio rv rv-d2">
+        <div class="hero-portfolio hero-in" style="--hd:.2s">
           <div class="hp-head">
             <span class="hv-tag">Our portfolio</span>
             <span class="hv-live">2 products</span>
